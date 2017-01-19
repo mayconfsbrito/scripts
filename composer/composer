@@ -1,5 +1,5 @@
 #!/bin/sh
  export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
  echo "Current working directory: '"$(pwd)"'"
- echo "docker-compose run composer" $@
- docker-compose run composer $@
+ echo "docker-compose -f /home/maycon/docker/docker-compose.yml composer" $@
+ docker-compose -f /home/maycon/docker/docker-compose.yml run composer $@
