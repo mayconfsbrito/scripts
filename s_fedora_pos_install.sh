@@ -12,7 +12,7 @@ EOF"
 eval "dnf install google-chrome-stable -y"
 
 #transmission, gparted, nano
-eval "dnf install transmission transmission-daemon nano gparted terminator steam -y"
+eval "dnf install transmission git-core nano gparted terminator steam gnome-tweak-tool -y"
 eval "systemctl enable transmission-daemon.service"
 
 #codecs e vlc
@@ -23,8 +23,7 @@ eval "dnf install vlc -y"
 
 #fstab
 eval "mkdir /media/Data /media/Games"
-eval "echo 'UUID=C0B08DC4B08DC200 /media/Data    ntfs    defaults,nofail 0 0' >> /etc/fstab"
-eval "echo 'UUID=515BFFEB722C1BEC /media/Games    ntfs    defaults,nofail 0 0' >> /etc/fstab"
+eval "echo 'UUID=515BFFEB722C1BEC /media/Games    ntfs    defaults,uid=1000,gid=1000,nofail 0 0' >> /etc/fstab"
 eval "mount -a"
 
 #sublime
@@ -37,7 +36,7 @@ Type=Application
 Encoding=UTF-8
 Name=Sublime Text
 Comment=Sublime Text
-Exec=subl &
+Exec=subl
 Icon=/media/Data/Softwares/Linux/sublime_text_3/Icon/128x128/sublime-text.png
 Terminal=false' >>  ~/.local/share/applications/sublime-text.desktop"
 eval "cd /home/maycon/sublime_text_3/Packages/"
@@ -48,14 +47,14 @@ eval "git clone https://github.com/mayconfsbrito/my-sublime-text-settings.git"
 eval "rm -rf /home/maycon/.config/sublime-text-3/Packages/User/"
 eval "ln -sf /media/Data/Softwares/Desenvolvimento/my-sublime-text-settings/Packages/User/ /home/maycon/.config/sublime-text-3/Packages/"
 
-
 #home
-eval "bash /media/Data/Softwares/Scripts/script_home_Maycon.sh"
+eval "bash /media/Data/Softwares/scripts/script_home_Maycon.sh"
 
 #playonlinux
 eval "dnf install playonlinux -y"
 
 #docker
+eval "echo 'OTHER_ARGS=\"-g /media/Data/Softwares/lib/docker\"'"
 eval "tee /etc/yum.repos.d/docker.repo <<-'EOF'
 [dockerrepo]
 name=Docker Repository
@@ -75,3 +74,8 @@ eval "cd /media/Data/Softwares/Linux/"
 eval "curl -L 'https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose"
 eval "chmod +x /usr/local/bin/docker-compose"
 eval "docker-compose --version"
+
+#imagens docker
+#composer
+eval "cp /media/Data/Softwares/scripts/composer/composer /usr/local/bin/composer"
+eval "sudo chmod +x /usr/local/bin/composer"
