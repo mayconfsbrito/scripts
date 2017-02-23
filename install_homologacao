@@ -1,0 +1,46 @@
+#!bin/bash
+uname -r
+
+apt-get update
+
+apt-get install curl \
+	apt-transport-https \
+        ca-certificates \
+        software-properties-common
+
+curl -fsSL https://yum.dockerproject.org/gpg | apt-key add -
+
+apt-key fingerprint 58118E89F3A912897C070ADBF76221572C52609D
+
+add-apt-repository \
+       "deb https://apt.dockerproject.org/repo/ \
+       debian-$(lsb_release -cs) \
+       main"
+
+apt-get update
+
+# Instala o docker
+apt-get -y install docker-engine
+
+#Instala o docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+
+# Cria o diretório de repositórios e importa o diretório personalizado do cluster do docker
+mkdir -p /repositorios/git/ \
+	&& cd /repositorios/git \
+	&& git clone https://github.com/mayconfsbrito/docker.git
+
+#cria o diretório com os arquivos do mysql
+mkdir -p /var/lib/mysql
+
+# Executa o cluster
+cd /repositorios/git/docker.git \
+	&& docker-compose -f docker-compose-bio.yml build
+
+echo ""
+echo "-----------------------------------------"
+echo "Instalação Concluída e docker Executando"
+echo "-----------------------------------------"
+echo ""
