@@ -72,7 +72,7 @@ eval "usermod -aG docker maycon"
 eval "docker run hello-world"
 eval "cd /media/Data/Softwares/Linux/"
 eval "curl -L 'https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose"
-eval "chmod +x /usr/local/bin/docker-compose"
+eval "chmod +x /usr/bin/docker-compose"
 eval "docker-compose --version"
 
 #imagens docker
