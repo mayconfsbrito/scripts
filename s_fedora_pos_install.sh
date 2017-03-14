@@ -12,7 +12,17 @@ EOF"
 eval "dnf install google-chrome-stable -y"
 
 #transmission, gparted, nano
-eval "dnf install transmission git-core nano gparted terminator steam gnome-tweak-tool -y"
+eval "dnf install \
+	transmission \
+	git-core \
+	nano \
+	gparted \
+	terminator \
+	steam \
+	gnome-tweak-tool \
+	npm \
+	nodejs \
+	-y"
 eval "systemctl enable transmission-daemon.service"
 
 #codecs e vlc
