@@ -36,6 +36,8 @@ cd libmtp-1.1.12/
 	&& sudo make install \
 	&& sudo cp 69-libmtp.rules /etc/udev/rules.d
 
+adb shell killall b2g
+adb forward tcp:6000 localfilesystem:/data/local/debugger-socket
 echo "0x076c" > ~/.android/adb_usb.ini
 
 sudo udevadm control --reload-rules
