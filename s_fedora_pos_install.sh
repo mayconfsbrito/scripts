@@ -53,26 +53,20 @@ eval "bash /media/Data/Softwares/scripts/script_home_Maycon.sh"
 eval "dnf install playonlinux -y"
 
 #docker
-eval "echo 'OTHER_ARGS=\"-g /media/Data/Softwares/lib/docker\"'"
-eval "tee /etc/yum.repos.d/docker.repo <<-'EOF'
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/fedora/$releasever/
-enabled=1
-gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
-EOF"
-eval "dnf install docker-engine -y"
-eval "systemctl enable docker.service"
-eval "systemctl start docker"
-eval "docker run --rm hello-world"
-eval "groupadd docker"
-eval "usermod -aG docker maycon"
-eval "docker run hello-world"
-eval "cd /media/Data/Softwares/Linux/"
-eval "curl -L 'https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose"
-eval "chmod +x /usr/bin/docker-compose"
-eval "docker-compose --version"
+dnf remove docker \
+                  docker-common \
+                  container-selinux \
+                  docker-selinux \
+                  docker-engine -y
+dnf -y install dnf-plugins-core
+dnf config-manager \
+    --add-repo \
+    https://download.docker.com/linux/fedora/docker-ce.repo
+dnf makecache fast
+dnf install docker-ce -y
+systemctl start docker
+systemctl enable docker
+docker run hello-world
 
 #imagens docker
 #composer
