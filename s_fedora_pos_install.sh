@@ -1,15 +1,11 @@
 #!/bin/bash
 
+# Update
+dnf update
+
 # Chrome
-eval "cat << EOF > /etc/yum.repos.d/google-chrome.repo
-[google-chrome]
-name=google-chrome - \$basearch
-baseurl=http://dl.google.com/linux/chrome/rpm/stable/\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
-EOF"
-eval "dnf install google-chrome-stable -y"
+wget http://repo.fdzh.org/chrome/google-chrome-mirrors.repo -P /etc/yum.repos.d/ 
+dnf install google-chrome-stable -y
 
 #transmission, gparted, nano
 eval "dnf install \
@@ -68,7 +64,3 @@ systemctl start docker
 systemctl enable docker
 docker run hello-world
 
-#imagens docker
-#composer
-eval "cp /media/Data/Softwares/scripts/composer/composer /usr/local/bin/composer"
-eval "sudo chmod +x /usr/local/bin/composer"
