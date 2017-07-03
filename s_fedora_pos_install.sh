@@ -3,6 +3,14 @@
 # Update
 dnf update
 
+# fstab
+cp /etc/fstab /etc/fstab_bkp_orig
+cp fstab /etc/fstab
+mount -a
+
+#home
+eval "bash /media/Data/Softwares/scripts/script_home_Maycon.sh"
+
 # Chrome
 wget http://repo.fdzh.org/chrome/google-chrome-mirrors.repo -P /etc/yum.repos.d/ 
 dnf install google-chrome-stable -y
@@ -11,6 +19,7 @@ dnf install google-chrome-stable -y
 eval "dnf install \
 	transmission \
 	git-core \
+	gitk \
 	nano \
 	gparted \
 	terminator \
@@ -41,9 +50,6 @@ git clone https://github.com/mayconfsbrito/my-sublime-text-settings.git
 rm -rf /home/maycon/.config/sublime-text-3/Packages
 ln -sf /media/Data/Softwares/Desenvolvimento/my-sublime-text-settings/Packages /home/maycon/.config/sublime-text-3/Packages
 chmod -R 777 /home/maycon/.config/sublime-text-3/Packages
-
-#home
-eval "bash /media/Data/Softwares/scripts/script_home_Maycon.sh"
 
 #playonlinux
 eval "dnf install playonlinux -y"
