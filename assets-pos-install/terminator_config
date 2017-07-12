@@ -1,4 +1,5 @@
 [global_config]
+  window_state = maximise
   hide_from_taskbar = True
 [keybindings]
 [layouts]

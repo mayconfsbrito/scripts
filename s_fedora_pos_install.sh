@@ -5,7 +5,7 @@ dnf update
 
 # fstab
 cp /etc/fstab /etc/fstab_bkp_orig
-cp fstab /etc/fstab
+cp assets-pos-install/fstab /etc/fstab
 mount -a
 
 #home
@@ -26,19 +26,24 @@ eval "dnf install \
 	gnome-tweak-tool \
 	npm \
 	nodejs \
+	vlc \
 	-y"
 eval "systemctl enable transmission-daemon.service"
 
-#codecs e vlc
-eval "su -c 'dnf install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm' -y"
-eval "dnf install gstreamer1-plugins-base gstreamer1-plugins-good gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-free gstreamer1-plugins-bad-freeworld gstreamer1-plugins-bad-free-extras ffmpeg -y"
-eval "dnf install gstreamer{1,}-{ffmpeg,libav,plugins-{good,ugly,bad{,-free,-nonfree}}} --setopt=strict=0 -y"
-eval "dnf install vlc -y"
+#terminator
+mkdir -p /home/maycon/.config/terminator
+cp  assets-pos-install/terminator_config /home/maycon/.config/terminator/config
 
-#fstab
-eval "mkdir /media/Data /media/Games"
-eval "echo 'UUID=515BFFEB722C1BEC /media/Games    ntfs    defaults,uid=1000,gid=1000,nofail 0 0' >> /etc/fstab"
-eval "mount -a"
+#transmission
+cp assets-pos-install/trasmission-settings.json /home/maycon/.config/transmission/settings.json
+
+#codecs e vlc
+dnf install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-25
+dnf install http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-25
+dnf remove gstreamer1-plugin-mpg123 -y
+sudo dnf install amrnb amrwb faad2 flac ffmpeg gpac-libs lame libfc14audiodecoder mencoder mplayer x264 x265 gstreamer-plugins-espeak gstreamer-plugins-fc gstreamer-rtsp gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-bad-free-extras gstreamer-plugins-bad-nonfree gstreamer-plugins-ugly gstreamer-ffmpeg gstreamer1-plugins-base gstreamer1-libav gstreamer1-plugins-bad-free-extras gstreamer1-plugins-bad-freeworld gstreamer1-plugins-base-tools gstreamer1-plugins-good-extras gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-good -y
 
 #sublime
 rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
