@@ -6,3 +6,7 @@
 #dnf install intel-gpu-tools -y
 #bumblebee-nvidia --check
 
+TERMINATOR_CONFIG_FILE_PATH='/home/maycon/.config/terminator/config'
+chmod -R 777 $TERMINATOR_CONFIG_FILE_PATH
+
+

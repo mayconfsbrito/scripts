@@ -6,7 +6,7 @@
 # Accessible filesystems, by reference, are maintained under '/dev/disk'
 # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
 #
-UUID=591cf80a-6097-4ba0-aa76-96ce993d7eef /                       ext4    defaults        1 1
+UUID=56d2ef36-e1ee-4fa7-b219-304913a0699f /                       ext4    defaults        1 1
 UUID=9BCA-4AC8         /boot/efi               vfat    umask=0077,shortname=winnt 0 2
 /dev/mapper/fedora-swap swap                    swap    defaults        0 0
 UUID=515BFFEB722C1BEC /media/Games    ntfs    defaults,uid=1000,gid=1000,nofail 0 0
