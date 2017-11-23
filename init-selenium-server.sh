@@ -19,7 +19,7 @@ FILE_GECKO="/usr/local/lib/geckodriver"
 if [ ! -f ${FILE_GECKO} ]; then
 	isRoot 1
 	cd /usr/local/lib/
-	wget  https://github.com/mozilla/geckodriver/releases/download/${GECKO_DRIVER_VERSION}/geckodriver-${GECKO_DRIVER_VERSION}-linux64.tar.gz -O geckodriver.tar.gz
+	wget  https://github.com/mozilla/geckodriver/releases/download/v${GECKO_DRIVER_VERSION}/geckodriver-v${GECKO_DRIVER_VERSION}-linux64.tar.gz -O geckodriver.tar.gz
 	tar -zxvf geckodriver.tar.gz
 	chmod 777 ${FILE_GECKO}
 	rm -rf geckodriver.tar.gz
