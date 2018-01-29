@@ -1,4 +1,9 @@
 #!/bin/bash
+
+#
+# Percorre todos os repositórios GIT dentro de um diretório e remove todos os
+# seus remotos, substiuindo-os por um novo.
+#
 while IFS='' read -r -d '' filename; do
   cd $filename
   dir=$(printf '%s\n' "${PWD##*/}")
