@@ -1,0 +1,111 @@
+#!/bin/bash
+
+#
+# Parâmetros
+# i - ip do computador no qual a base será restaurada
+# u - usuário do MySQL
+# b - banco de dados
+# f - arquivo com o dump, pode ser do tipo .sql ou .sql.gz
+#
+# Exemplo de uso:
+#  ./mysql_restore_dump -i 192.168.101.151 -u maycon.brito -b teste -f /media/hd/dumps/teste.sql.gz
+#
+check_command()
+{
+    STATUS=$1
+    RESULT=$2
+
+    if [ $RESULT -ne "0" ]; then
+        case $STATUS in
+            1) msg="Erro ao criar arquivo temporário."
+            ;;
+            2) msg="Erro ao restaurar a base de dados no MySQL."
+            ;;
+        esac
+        printf "\nAtenção! $msg\n\n"
+        exit
+    fi
+}
+
+# (1) Variáveis do banco de dados
+shopt -s globstar
+read -p "Tabelas: " TABLES;
+read -sp "Senha (MySQL): " PASS;
+echo ''
+
+# Verifica os Parâmetros
+while getopts ":i:u:f:p:b:" opt; do
+  case $opt in
+    i) DBSERVER="$OPTARG"
+    ;;
+    u) USER="$OPTARG"
+    ;;
+    b) DATABASE="$OPTARG"
+    ;;
+    f) ORIG_DUMP_FILE="$OPTARG"
+    ;;
+    \?) echo "opção inválida -$OPTARG" >&2
+    ;;
+  esac
+done
+
+DUMP_FILE=${ORIG_DUMP_FILE}
+
+if [ -z "$PASS" ]; then
+    printf '\nAtenção! A senha é obrigatória.\n\n'
+    exit
+fi
+
+if [ ${ORIG_DUMP_FILE: -7} == ".sql.gz" ]; then
+    TEMP_DESCOMPACTED_FILE=${ORIG_DUMP_FILE:: -3}
+    echo ''
+    echo -n "Descompactando arquivo em \"${TEMP_DESCOMPACTED_FILE}\"..."
+    gunzip ${ORIG_DUMP_FILE} -c > ${TEMP_DESCOMPACTED_FILE}
+    DUMP_FILE=${TEMP_DESCOMPACTED_FILE}
+    echo 'ok'
+    echo ''
+fi
+
+# Foram definidas uma ou mais tabelas
+if [ ! -z "$TABLES" ]; then
+    TEMP_DUMP_FILE=/tmp/tmp_dump.sql
+    printf "\nCriando arquivo de dump temporário em ${TEMP_DUMP_FILE} para as tabelas selecionadas\n"
+    printf "USE ${DATABASE};\n\n"  > ${TEMP_DUMP_FILE};
+    printf "SET FOREIGN_KEY_CHECKS=0;\n\n" >> ${TEMP_DUMP_FILE};
+    printf "\nExtraindo SQL das Tabelas...\n\n"
+
+    for table in ${TABLES[@]}; do
+        echo -n "${table}..."
+        printf "\n-- " >> ${TEMP_DUMP_FILE};
+        sql=''
+        sql=$(sed -n -e "/^-- Table structure for table \`$table\`/,/);/p" ${ORIG_DUMP_FILE})
+        if [ -z "$sql" ]; then
+            echo 'não encontrada'
+        else
+            echo "{$sql}" >> ${TEMP_DUMP_FILE}
+            printf "\n\n" >> ${TEMP_DUMP_FILE};
+            echo ' ok'
+        fi
+        echo ''
+    done
+    check_command 1 $?
+    DUMP_FILE=${TEMP_DUMP_FILE}
+    printf "Arquivo ${DUMP_FILE} concluído!\n\n"
+fi
+
+echo -n "Restaurando dump no Banco de Dados \"${DUMP_FILE}\"..."
+if [ ! -z "${DATABASE}" ]; then
+    mysql -u ${USER} --password=${PASS} -h ${DBSERVER} --execute="CREATE DATABASE IF NOT EXISTS ${DATABASE};"
+fi
+mysql -u ${USER} --password=${PASS} -h ${DBSERVER}  ${DATABASE} < ${DUMP_FILE}
+check_command 2 $?
+echo 'ok'
+
+if [ ! -z "$TABLES" ]; then
+    echo -n "Removendo arquivo temporário \"${TEMP_DUMP_FILE}\"... "
+    rm -f ${TEMP_DUMP_FILE}
+    echo 'ok'
+fi
+
+echo ''
+printf 'Restauração Concluída!\n\n'
