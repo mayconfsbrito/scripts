@@ -36,6 +36,5 @@ if [ ! -f ${FILE_CHROME} ]; then
 	rm -rf chromedriver.zip
 fi
 
-echo "java -Dwebdriver.gecko.driver=${FILE_GECKO} -Dwebdriver.chrome.driver=${FILE_CHROME} ${FILE}"
-java -jar -Dwebdriver.gecko.driver=${FILE_GECKO} -Dwebdriver.chrome.driver=${FILE_CHROME} ${FILE}
+java -jar -Dwebdriver.gecko.driver=${FILE_GECKO} -Dwebdriver.chrome.driver=${FILE_CHROME} ${FILE} -enablePassThrough false
 
