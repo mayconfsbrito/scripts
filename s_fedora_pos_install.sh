@@ -1,81 +1,78 @@
 #!/bin/bash
 
-# Chrome
-eval "cat << EOF > /etc/yum.repos.d/google-chrome.repo
-[google-chrome]
-name=google-chrome - \$basearch
-baseurl=http://dl.google.com/linux/chrome/rpm/stable/\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
-EOF"
-eval "dnf install google-chrome-stable -y"
+# variables
+TERMINATOR_CONFIG_FILE_PATH='/home/maycon/.config/terminator/config'
+TRANSMISSION_CONFIG_FILE_PATH='/home/maycon/.config/transmission/settings.json'
 
-#transmission, gparted, nano
-eval "dnf install transmission git-core nano gparted terminator steam gnome-tweak-tool -y"
-eval "systemctl enable transmission-daemon.service"
+# Update
+dnf update
 
-#codecs e vlc
-eval "su -c 'dnf install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm'"
-eval "dnf install gstreamer1-plugins-base gstreamer1-plugins-good gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-free gstreamer1-plugins-bad-freeworld gstreamer1-plugins-bad-free-extras ffmpeg -y"
-eval "dnf install gstreamer{1,}-{ffmpeg,libav,plugins-{good,ugly,bad{,-free,-nonfree}}} --setopt=strict=0 -y"
-eval "dnf install vlc -y"
-
-#fstab
-eval "mkdir /media/Data /media/Games"
-eval "echo 'UUID=515BFFEB722C1BEC /media/Games    ntfs    defaults,uid=1000,gid=1000,nofail 0 0' >> /etc/fstab"
-eval "mount -a"
-
-#sublime
-eval "wget https://download.sublimetext.com/sublime_text_3_build_3126_x64.tar.bz2"
-eval "tar -xjvf sublime_text_3_build_3126_x64.tar.bz2"
-eval "ln -sf /home/maycon/sublime_text_3/sublime_text /usr/local/bin/subl"
-eval "touch ~/.local/share/applications/sublime-text.desktop"
-eval "echo '[Desktop Entry]
-Type=Application
-Encoding=UTF-8
-Name=Sublime Text
-Comment=Sublime Text
-Exec=subl
-Icon=/media/Data/Softwares/Linux/sublime_text_3/Icon/128x128/sublime-text.png
-Terminal=false' >>  ~/.local/share/applications/sublime-text.desktop"
-eval "cd /home/maycon/sublime_text_3/Packages/"
-eval "git clone https://github.com/mayconfsbrito/my-sublime-text-settings.git"
-eval "cd /media/Data/Softwares/Desenvolvimento/"
-eval "rm -rf my-sublime-text-settings/"
-eval "git clone https://github.com/mayconfsbrito/my-sublime-text-settings.git"
-eval "rm -rf /home/maycon/.config/sublime-text-3/Packages/User/"
-eval "ln -sf /media/Data/Softwares/Desenvolvimento/my-sublime-text-settings/Packages/User/ /home/maycon/.config/sublime-text-3/Packages/"
+# fstab
+mkdir -p /media/Games
+mkdir -p /media/Data
+cp /etc/fstab /etc/fstab_bkp_orig
+cp assets-pos-install/fstab /etc/fstab
+mount -a
 
 #home
 eval "bash /media/Data/Softwares/scripts/script_home_Maycon.sh"
 
-#playonlinux
-eval "dnf install playonlinux -y"
+#transmission, gparted, nano
+eval "dnf install \
+	transmission \
+	git-core \
+	gitk \
+	nano \
+	gparted \
+	terminator \
+	gnome-tweak-tool \
+	vlc \
+	-y"
+
+#terminator
+mkdir -p /home/maycon/.config/terminator
+cp  assets-pos-install/terminator_config $TERMINATOR_CONFIG_FILE_PATH
+chmod -R 777 $TERMINATOR_CONFIG_FILE_PATH
+#transmission
+cp assets-pos-install/trasmission-settings.json $TRANSMISSION_CONFIG_FILE_PATH
+chmod -R 777 $TRANSMISSION_CONFIG_FILE_PATH
+
+# Chrome
+wget http://repo.fdzh.org/chrome/google-chrome-mirrors.repo -P /etc/yum.repos.d/ 
+dnf install google-chrome-stable -y
+
+#codecs e vlc
+dnf install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-26
+dnf install http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-26
+dnf remove gstreamer1-plugin-mpg123 -y
+sudo dnf install amrnb amrwb faad2 flac ffmpeg gpac-libs lame libfc14audiodecoder mencoder mplayer x264 x265 gstreamer-plugins-espeak gstreamer-plugins-fc gstreamer-rtsp gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-bad-free-extras gstreamer-plugins-bad-nonfree gstreamer-plugins-ugly gstreamer-ffmpeg gstreamer1-plugins-base gstreamer1-libav gstreamer1-plugins-bad-free-extras gstreamer1-plugins-bad-freeworld gstreamer1-plugins-base-tools gstreamer1-plugins-good-extras gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-good -y
+
+#sublime
+rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+dnf install sublime-text -y
+cd /media/Data/Softwares/Desenvolvimento/
+rm -rf my-sublime-text-settings/
+git clone https://github.com/mayconfsbrito/my-sublime-text-settings.git
+rm -rf /home/maycon/.config/sublime-text-3/Packages
+ln -sf /media/Data/Softwares/Desenvolvimento/my-sublime-text-settings/Packages /home/maycon/.config/sublime-text-3/Packages
+chmod -R 777 /home/maycon/.config/sublime-text-3/Packages
 
 #docker
-eval "echo 'OTHER_ARGS=\"-g /media/Data/Softwares/lib/docker\"'"
-eval "tee /etc/yum.repos.d/docker.repo <<-'EOF'
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/fedora/$releasever/
-enabled=1
-gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
-EOF"
-eval "dnf install docker-engine -y"
-eval "systemctl enable docker.service"
-eval "systemctl start docker"
-eval "docker run --rm hello-world"
-eval "groupadd docker"
-eval "usermod -aG docker maycon"
-eval "docker run hello-world"
-eval "cd /media/Data/Softwares/Linux/"
-eval "curl -L 'https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose"
-eval "chmod +x /usr/local/bin/docker-compose"
-eval "docker-compose --version"
+#dnf remove docker \
+#                  docker-common \
+#                  container-selinux \
+#                  docker-selinux \
+#                  docker-engine -y
+#dnf -y install dnf-plugins-core
+#dnf config-manager \
+#    --add-repo \
+#    https://download.docker.com/linux/fedora/docker-ce.repo
+#dnf makecache fast
+#dnf install docker-ce -y
+#systemctl start docker
+#systemctl enable docker
+#docker run hello-world
 
-#imagens docker
-#composer
-eval "cp /media/Data/Softwares/scripts/composer/composer /usr/local/bin/composer"
-eval "sudo chmod +x /usr/local/bin/composer"

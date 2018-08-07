@@ -1,0 +1,20 @@
+[global_config]
+  window_state = maximise
+  hide_from_taskbar = True
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      profile = default
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_darkness = 0.85
+    background_type = transparent
+    cursor_color = "#aaaaaa"
+    scrollback_infinite = True

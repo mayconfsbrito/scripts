@@ -1,0 +1,33 @@
+#!/bin/bash
+shopt -s globstar
+
+USER_HOM_BD="maycon.brito"
+PASS_HOM_BD="tic"
+DATABASE=bioextratus
+LOCAL_PASS='/root/mysql'
+
+echo '...'
+
+# if [ $# -lt 2 ]
+# then
+
+# 	echo "Favor definir dois parâmetros para execução deste script"
+# 	echo "Primeiro parâmetro:"
+# 	echo "		nome do usuário do banco de dados"
+# 	echo "Segundo parâmetro:"
+# 	echo "		senha do usuário do banco de dados"
+# 	echo "Execução interrompida"
+# 	echo '...'
+# 	exit 1
+# fi
+
+DIR_SP=/var/www/stored-procedures
+
+echo "Iniciando a execução das stored-procedures no diretório /var/www/stored-procedures"
+for file in ${DIR_SP}/**/*.sql
+do
+    echo $file
+    mysql --user=${USER_HOM_BD} --password=${PASS_HOM_BD} ${DATABASE} < $file --force
+done
+echo "Execução do script finalizada"
+echo '...'

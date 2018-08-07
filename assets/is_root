@@ -1,0 +1,18 @@
+#!/bin/bash
+################################################################################
+# Verifica se o usuário é root
+################################################################################
+
+function isRoot(){
+	if [ "$(id -u)" != "0" ]; then
+	    echo""
+	    echo "Esse script deve ser executado com \"sudo\" ou como usuário \"root\"" 1>&2
+	    echo""
+	    if [[ -n $# && $1 -eq 1 ]]; then
+	      	exit 1
+	    fi
+	    return 0
+	else
+		return 1
+	fi
+}

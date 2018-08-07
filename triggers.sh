@@ -9,9 +9,9 @@ LOCAL_PASS='/root/mysql'
 
 echo '...'
 
-DIR_SP=/var/www/stored-procedures
+DIR_SP=/var/www/triggers
 
-echo "Iniciando a execução das stored-procedures no diretório /var/www/stored-procedures"
+echo "Iniciando a execução das triggers no diretório /var/www/triggers"
 for file in ${DIR_SP}/**/*.sql
 do
     echo $file
